@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f8">
+  <meta name="description" content="De-identified clinician documentation workspace. No diagnostic engine is connected in this deployment.">
+  <title>Clarity CDSS — Clinical documentation workspace</title>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="clinical-registry.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Clarity CDSS home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M16 5v22M5 16h22M8.2 8.2l15.6 15.6m0-15.6L8.2 23.8"/></svg>
+      </span>
+      <span class="brand-copy"><strong>clarity</strong><small>CLINICAL DOCUMENTATION</small></span>
+    </a>
+    <div class="topbar-right">
+      <span class="offline-badge"><span></span> Local workspace</span>
+      <a class="guidelines-link" href="guidelines.html">Guideline sources <span aria-hidden="true">↗</span></a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span><span class="theme-toggle-label">Dark mode</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="page-heading">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-dot"></span> CLINICIAN WORKSPACE <span class="eyebrow-divider">/</span> V3 BLUEPRINT</div>
+        <h1>Clinical assessment</h1>
+        <p class="page-intro">Structure a de-identified assessment and prepare a clinician-authored worksheet. Choose documentation-only mode or preview the separate synthetic diagnosis demo.</p>
+      </div>
+    </section>
+
+    <aside class="safety-banner" aria-label="Important safety notice">
+      <div class="safety-icon" aria-hidden="true">!</div>
+      <div><strong>Clinical documentation workspace — not a diagnostic system.</strong> No AI engine is connected. The separate demo shows only a fixed, prewritten fictional differential; it does not read or diagnose patient data and is not AI output. Real AI drafts require an approved service and clinician review. Scores shown here are unvalidated calculations and must not guide patient care. <strong>Do not enter identifying patient information.</strong></div>
+      <span class="documentation-tag">NO CONNECTED AI</span>
+    </aside>
+
+    <div class="workspace-grid">
+      <form id="case-form" novalidate>
+        <section class="card form-card" id="patient-section">
+          <div class="section-heading">
+            <div class="section-number">01</div>
+            <div><h2>Patient</h2><p>De-identified information only</p></div>
+            <span class="section-trailing">REQUIRED FOR CONTEXT</span>
+          </div>
+          <div class="field-grid field-grid-4">
+            <label class="field"><span>Age <small>years</small></span><input id="age" name="age" type="number" min="0" max="120" inputmode="numeric" placeholder="e.g. 46"><small class="field-error" data-error-for="age"></small></label>
+            <label class="field"><span>Sex</span><select id="sex" name="sex"><option value="">Unspecified</option><option>Female</option><option>Male</option><option>Intersex / other</option></select></label>
+            <label class="field"><span>Weight <small>kg</small></span><input id="weight" name="weight" type="number" min="0.5" max="500" step="0.1" placeholder="—"></label>
+            <label class="field"><span>Height <small>cm</small></span><input id="height" name="height" type="number" min="30" max="260" step="0.1" placeholder="—"></label>
+            <label class="field"><span>Pregnancy status</span><select id="pregnancy" name="pregnancy"><option value="">Not stated / not applicable</option><option>No</option><option>Yes</option><option>Possibly</option></select></label>
+            <label class="field field-span-3"><span>Allergies <small>include reaction if known</small></span><input id="allergies" name="allergies" type="text" maxlength="300" placeholder="e.g. Penicillin — rash; or none known"></label>
+          </div>
+          <div class="bmi-summary" id="bmi-summary" role="status" aria-live="polite">
+            <strong>BMI</strong>
+            <span id="bmi-value">Not calculated</span>
+            <small id="bmi-note">Enter a valid weight and height to calculate.</small>
+            <a id="bmi-reference" href="https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight" target="_blank" rel="noopener noreferrer">WHO BMI guidance ↗</a>
+          </div>
+        </section>
+
+        <section class="card form-card" id="vitals-section">
+          <div class="section-heading">
+            <div class="section-number">02</div>
+            <div><h2>Observations</h2><p>Optional calculations below are unvalidated and must not guide care</p></div>
+            <span class="section-trailing">NOT CLINICALLY VALIDATED</span>
+          </div>
+          <div class="field-grid field-grid-4">
+            <label class="field"><span>Respiratory rate <small>/min</small></span><input id="respRate" name="respRate" type="number" min="1" max="100" step="1" placeholder="—"></label>
+            <label class="field"><span>SpO₂ <small>%</small></span><input id="spo2" name="spo2" type="number" min="1" max="100" placeholder="—"></label>
+            <label class="field"><span>FiO₂ <small>%</small></span><input id="fio2" name="fio2" type="number" min="21" max="100" placeholder="21"></label>
+            <label class="field"><span>Systolic BP <small>mmHg</small></span><input id="systolicBP" name="systolicBP" type="number" min="20" max="300" placeholder="—"></label>
+            <label class="field"><span>Diastolic BP <small>mmHg</small></span><input id="diastolicBP" name="diastolicBP" type="number" min="10" max="200" placeholder="—"></label>
+            <label class="field"><span>Heart rate <small>/min</small></span><input id="heartRate" name="heartRate" type="number" min="1" max="300" placeholder="—"></label>
+            <label class="field"><span>Temperature <small>°C</small></span><input id="tempC" name="tempC" type="number" min="20" max="45" step="0.1" placeholder="—"></label>
+            <label class="field"><span>Capillary refill <small>seconds</small></span><input id="capRefill" name="capRefill" type="number" min="0" max="30" step="0.1" placeholder="—"></label>
+            <label class="field"><span>Consciousness (AVPU)</span><select id="avpu" name="avpu"><option value="">Not recorded</option><option value="A">Alert</option><option value="V">Voice</option><option value="P">Pain</option><option value="U">Unresponsive</option></select></label>
+            <label class="field"><span>NEWS2 SpO₂ scale</span><select id="spo2Scale" name="spo2Scale"><option value="1">Scale 1 — standard</option><option value="2">Scale 2 — clinician-confirmed hypercapnic respiratory failure</option></select><small class="field-hint">Use Scale 2 only when clinically indicated.</small></label>
+            <label class="field field-inline-check"><input id="supplementalO2" name="supplementalO2" type="checkbox"><span>On supplemental oxygen</span></label>
+          </div>
+          <div class="subsection-title">Glasgow Coma Scale <span>Enter all three components to calculate total</span></div>
+          <div class="field-grid field-grid-3">
+            <label class="field"><span>Eye opening <small>1–4</small></span><select id="gcsEye" name="gcsEye"><option value="">Not recorded</option><option value="1">1 — None</option><option value="2">2 — To pressure</option><option value="3">3 — To sound</option><option value="4">4 — Spontaneous</option></select></label>
+            <label class="field"><span>Verbal response <small>1–5</small></span><select id="gcsVerbal" name="gcsVerbal"><option value="">Not recorded</option><option value="1">1 — None</option><option value="2">2 — Sounds</option><option value="3">3 — Words</option><option value="4">4 — Confused</option><option value="5">5 — Oriented</option></select></label>
+            <label class="field"><span>Motor response <small>1–6</small></span><select id="gcsMotor" name="gcsMotor"><option value="">Not recorded</option><option value="1">1 — None</option><option value="2">2 — Extension</option><option value="3">3 — Flexion</option><option value="4">4 — Withdraws</option><option value="5">5 — Localises</option><option value="6">6 — Obeys commands</option></select></label>
+          </div>
+        </section>
+
+        <section class="card form-card" id="presentation-section">
+          <div class="section-heading">
+            <div class="section-number">03</div>
+            <div><h2>Presentation</h2><p>Describe the clinical picture in your own words</p></div>
+            <span class="section-trailing">CLINICIAN ENTERED</span>
+          </div>
+          <div class="field-grid field-grid-2">
+            <label class="field"><span>Chief complaint <b class="required">*</b></span><input id="complaint" name="complaint" type="text" maxlength="240" required placeholder="Primary reason for assessment"><small class="field-error" data-error-for="complaint"></small></label>
+            <label class="field"><span>History of present illness (HPI)</span><textarea id="hpi" name="hpi" rows="3" maxlength="1800" placeholder="Onset, progression, context, relevant negatives…"></textarea></label>
+          </div>
+          <div class="subsection-title">Pain characterisation <span>SOCRATES</span></div>
+          <div class="field-grid field-grid-4">
+            <label class="field"><span>Site</span><input name="painSite" type="text" maxlength="160" placeholder="—"></label>
+            <label class="field"><span>Onset</span><input name="painOnset" type="text" maxlength="160" placeholder="—"></label>
+            <label class="field"><span>Character</span><input name="painCharacter" type="text" maxlength="160" placeholder="—"></label>
+            <label class="field"><span>Radiation</span><input name="painRadiation" type="text" maxlength="160" placeholder="—"></label>
+            <label class="field"><span>Associated symptoms</span><input name="painAssociated" type="text" maxlength="300" placeholder="—"></label>
+            <label class="field"><span>Timing / duration</span><input name="painTiming" type="text" maxlength="160" placeholder="—"></label>
+            <label class="field"><span>Exacerbating / relieving</span><input name="painFactors" type="text" maxlength="240" placeholder="—"></label>
+            <label class="field"><span>Severity <small>0–10</small></span><input name="painSeverity" type="number" min="0" max="10" placeholder="—"></label>
+          </div>
+          <div class="field-grid field-grid-2 field-gap-top">
+            <label class="field"><span>PMHx / social / family history</span><textarea name="history" rows="3" maxlength="1200" placeholder="Relevant medical, social and family history…"></textarea></label>
+            <label class="field"><span>Current medications</span><textarea name="medications" rows="3" maxlength="1200" placeholder="Medication name only; no dose recommendations are generated"></textarea></label>
+            <label class="field"><span>Review of systems</span><textarea name="reviewSystems" rows="3" maxlength="1200" placeholder="Relevant positive and negative findings…"></textarea></label>
+            <label class="field"><span>Examination findings</span><textarea name="examination" rows="3" maxlength="1200" placeholder="Clinician-entered findings…"></textarea></label>
+            <label class="field"><span>Risk factors</span><textarea name="riskFactors" rows="2" maxlength="600" placeholder="Relevant risk factors…"></textarea></label>
+          </div>
+          <div class="subsection-title">Comorbidities</div>
+          <div class="check-grid">
+            <label><input type="checkbox" name="comorbidities" value="Hypertension"> Hypertension</label>
+            <label><input type="checkbox" name="comorbidities" value="Diabetes"> Diabetes</label>
+            <label><input type="checkbox" name="comorbidities" value="IHD / CAD"> IHD / CAD</label>
+            <label><input type="checkbox" name="comorbidities" value="Heart failure"> Heart failure</label>
+            <label><input type="checkbox" name="comorbidities" value="AF"> AF</label>
+            <label><input type="checkbox" name="comorbidities" value="CKD"> CKD</label>
+            <label><input type="checkbox" name="comorbidities" value="COPD"> COPD</label>
+            <label><input type="checkbox" name="comorbidities" value="Asthma"> Asthma</label>
+            <label><input type="checkbox" name="comorbidities" value="Stroke / TIA"> Stroke / TIA</label>
+            <label><input type="checkbox" name="comorbidities" value="Active malignancy"> Active malignancy</label>
+            <label><input type="checkbox" name="comorbidities" value="Immunosuppression"> Immunosuppression</label>
+            <label><input type="checkbox" name="comorbidities" value="Liver disease"> Liver disease</label>
+            <label><input type="checkbox" name="comorbidities" value="VTE history"> VTE history</label>
+            <label><input type="checkbox" name="comorbidities" value="Pregnancy"> Pregnancy</label>
+            <label><input type="checkbox" name="comorbidities" value="Recent surgery"> Recent surgery</label>
+          </div>
+          <div class="subsection-title">Structured finding confirmation <span>Mark only findings assessed and confirmed by the clinician</span></div>
+          <label class="field taxonomy-search"><span>Presentation / finding taxonomy</span><input id="taxonomy-search" type="search" maxlength="80" placeholder="Filter findings (e.g. chest pain, focal deficit)"><small class="field-hint">Selections are documentation labels only. They are not inferred from other fields or used to calculate case likelihood.</small></label>
+          <div class="check-grid taxonomy-grid" id="taxonomy-findings" aria-live="polite"></div>
+          <p class="registry-status" id="taxonomy-status" role="status">No structured findings confirmed.</p>
+          <div class="subsection-title red-flag-title">Red-flag findings <span>Check if present — clinician assessment always required</span></div>
+          <div class="check-grid red-flag-grid">
+            <label><input type="checkbox" name="redFlags" value="Chest pain radiating to jaw/arm"> Chest pain radiating to jaw/arm</label>
+            <label><input type="checkbox" name="redFlags" value="Tearing chest/back pain"> Tearing chest/back pain</label>
+            <label><input type="checkbox" name="redFlags" value="Thunderclap headache"> Thunderclap headache</label>
+            <label><input type="checkbox" name="redFlags" value="Focal neurological deficit"> Focal neurological deficit</label>
+            <label><input type="checkbox" name="redFlags" value="Neck stiffness / photophobia"> Neck stiffness / photophobia</label>
+            <label><input type="checkbox" name="redFlags" value="New confusion"> New confusion</label>
+            <label><input type="checkbox" name="redFlags" value="Haemoptysis"> Haemoptysis</label>
+            <label><input type="checkbox" name="redFlags" value="PR bleeding / melaena"> PR bleeding / melaena</label>
+            <label><input type="checkbox" name="redFlags" value="Syncope on exertion"> Syncope on exertion</label>
+            <label><input type="checkbox" name="redFlags" value="Testicular pain"> Testicular pain</label>
+            <label><input type="checkbox" name="redFlags" value="Saddle anaesthesia / urinary retention"> Saddle anaesthesia / urinary retention</label>
+            <label><input type="checkbox" name="redFlags" value="Non-blanching rash"> Non-blanching rash</label>
+            <label><input type="checkbox" name="redFlags" value="Pregnancy + abdominal pain"> Pregnancy + abdominal pain</label>
+          </div>
+          <div id="red-flag-alert" class="inline-alert" role="alert" hidden></div>
+        </section>
+
+        <section class="card form-card" id="modules-section">
+          <div class="section-heading">
+            <div class="section-number">04</div>
+            <div><h2>Specialty modules</h2><p>Select optional structured fields for this assessment</p></div>
+            <span class="section-trailing">DOCUMENTATION ONLY</span>
+          </div>
+          <p class="registry-intro">The acute / emergency core applies to every case. Select any additional specialties relevant to the clinician’s assessment. These modules organize documentation only; they do not activate specialty-specific rules or recommendations.</p>
+          <div class="module-picker" id="module-picker"></div>
+          <div class="module-details" id="module-details"></div>
+          <p class="module-score-limitation" id="module-score-limitation" role="status" hidden></p>
+        </section>
+
+        <section class="card form-card" id="labs-section">
+          <div class="section-heading">
+            <div class="section-number">05</div>
+            <div><h2>Bedside &amp; lab data</h2><p>Optional — enter results only when available</p></div>
+            <button type="button" class="collapse-button" id="labs-toggle" aria-expanded="true" aria-controls="labs-content">Hide −</button>
+          </div>
+          <div id="labs-content">
+            <div class="field-grid field-grid-4">
+              <label class="field"><span>Glucose <small>mmol/L</small></span><input name="glucose" type="number" min="0" max="100" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Lactate <small>mmol/L</small></span><input name="lactate" type="number" min="0" max="100" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Troponin</span><input name="troponin" type="text" maxlength="100" placeholder="Value + units"></label>
+              <label class="field"><span>WBC <small>×10⁹/L</small></span><input id="wbc" name="wbc" type="number" min="0" max="1000" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Hb <small>g/L</small></span><input name="hb" type="number" min="0" max="500" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Platelets <small>×10⁹/L</small></span><input name="platelets" type="number" min="0" max="10000" step="1" placeholder="—"></label>
+              <label class="field"><span>Sodium <small>mmol/L</small></span><input name="sodium" type="number" min="50" max="250" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Potassium <small>mmol/L</small></span><input name="potassium" type="number" min="0" max="20" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Chloride <small>mmol/L</small></span><input name="chloride" type="number" min="0" max="250" step="0.1" placeholder="—"></label>
+              <label class="field"><span>HCO₃ <small>mmol/L</small></span><input name="bicarbonate" type="number" min="0" max="100" step="0.1" placeholder="—"></label>
+              <label class="field"><span>Creatinine <small>µmol/L</small></span><input name="creatinine" type="number" min="0" max="100000" step="1" placeholder="—"></label>
+              <label class="field"><span>Urea <small>mmol/L</small></span><input id="urea" name="urea" type="number" min="0" max="300" step="0.1" placeholder="—"></label>
+              <label class="field"><span>CRP <small>mg/L</small></span><input name="crp" type="number" min="0" max="10000" step="0.1" placeholder="—"></label>
+              <label class="field"><span>INR</span><input name="inr" type="number" min="0" max="100" step="0.1" placeholder="—"></label>
+              <label class="field"><span>D-dimer</span><input name="ddimer" type="text" maxlength="100" placeholder="Value + units"></label>
+              <label class="field"><span>Bilirubin <small>µmol/L</small></span><input name="bilirubin" type="number" min="0" max="10000" step="0.1" placeholder="—"></label>
+              <label class="field"><span>ALT <small>U/L</small></span><input name="alt" type="number" min="0" max="100000" step="1" placeholder="—"></label>
+              <label class="field"><span>β-hCG</span><input name="bhcg" type="text" maxlength="100" placeholder="Value + units"></label>
+              <label class="field"><span>pH</span><input name="ph" type="number" min="0" max="14" step="0.01" placeholder="—"></label>
+              <label class="field"><span>PaCO₂ <small>kPa</small></span><input id="paco2" name="paco2" type="number" min="0" max="100" step="0.1" placeholder="—"></label>
+              <label class="field"><span>PaO₂ <small>kPa</small></span><input name="pao2" type="number" min="0" max="100" step="0.1" placeholder="—"></label>
+              <label class="field field-span-2"><span>ECG interpretation</span><textarea name="ecg" rows="2" maxlength="800" placeholder="Clinician-entered interpretation…"></textarea></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="card workflow-card" id="workflow-section">
+          <div class="section-heading">
+            <div class="section-number">06</div>
+            <div><h2>Review workflow</h2><p>Progress through the assessment checklist</p></div>
+            <span class="local-chip"><span></span> LOCAL ONLY</span>
+          </div>
+          <ol class="workflow-steps" id="workflow-steps">
+            <li class="is-current"><span class="step-index">1</span><span>Patient information</span></li>
+            <li><span class="step-index">2</span><span>Data validation</span></li>
+            <li><span class="step-index">3</span><span>Unvalidated calculations</span></li>
+            <li><span class="step-index">4</span><span>Clinician review pending</span></li>
+          </ol>
+          <div class="workflow-actions">
+            <button class="button button-outline" id="clear-case" type="button">Clear case</button>
+            <button class="button button-primary" id="generate-draft" type="button"><span aria-hidden="true">✓</span> Prepare clinical worksheet</button>
+          </div>
+          <div class="differential-card" id="differential-card" aria-live="polite" hidden>
+            <div class="differential-heading"><span aria-hidden="true">✓</span><div><h3>Clinical worksheet ready for clinician review</h3><p>No diagnosis or differential was generated</p></div></div>
+            <p class="differential-caution"><strong>Clinician-authored assessment only.</strong> This worksheet organizes entered information and unvalidated calculations. The clinician must independently interpret the case, select and document diagnoses with supporting evidence, and verify any codes or management plan using current approved sources.</p>
+            <div id="differential-results" class="differential-results"></div>
+          </div>
+          <p class="workflow-note" id="workflow-note">The synthetic demo ignores patient data. Real AI requests send case fields only after an approved service is connected and a clinician confirms consent.</p>
+        </section>
+
+        <section class="card form-card" id="diagnostic-documentation">
+          <div class="section-heading">
+            <div class="section-number">07</div>
+            <div><h2>Diagnosis workspace</h2><p>Choose an AI/demo preview or documentation-only workflow</p></div>
+            <span class="section-trailing">DEMO IS SYNTHETIC</span>
+          </div>
+          <fieldset class="diagnostic-mode-switch">
+            <legend>Choose how to use this section</legend>
+            <label class="diagnostic-mode-option">
+              <input type="radio" name="diagnosticMode" value="documentation" checked>
+              <span><strong>Documentation only</strong><small>Record clinician-authored assessment; no automated inference.</small></span>
+            </label>
+            <label class="diagnostic-mode-option">
+              <input type="radio" name="diagnosticMode" value="ai-demo">
+              <span><strong>AI / demo mode</strong><small>Try the synthetic example, or use an approved AI service if one is configured.</small></span>
+            </label>
+          </fieldset>
+
+          <section id="diagnostic-ai-demo-mode" hidden>
+            <p class="registry-intro"><strong>Demo output is prewritten, not generated by AI.</strong> It uses one fixed fictional example and never reads or sends this worksheet's patient fields. No live AI service is configured here. Use the demo to preview the review interface only; it is not clinical advice and must not be used for patient care.</p>
+            <section class="diagnostic-demo" aria-labelledby="diagnostic-demo-title">
+              <h3 id="diagnostic-demo-title">Synthetic example differential</h3>
+              <p><strong>Fictional training vignette:</strong> an adult with a short history of sore throat and cough. This fixed scenario is separate from the patient assessment above.</p>
+              <label class="diagnostic-consent">
+                <input id="diagnostic-demo-acknowledgment" type="checkbox">
+                <span>I understand this is a fixed, synthetic demonstration—not AI output, not based on my patient, and not a clinical recommendation.</span>
+              </label>
+              <button class="button button-outline" id="generate-diagnostic-demo" type="button" disabled>Show synthetic example differential</button>
+              <div id="diagnostic-demo-results" class="diagnostic-draft-list" aria-live="polite" hidden></div>
+            </section>
+            <section class="diagnostic-integration" aria-labelledby="diagnostic-integration-title">
+              <h3 id="diagnostic-integration-title">Connected AI service</h3>
+              <p id="diagnostic-engine-status" role="status" aria-live="polite">AI service not checked. Checking sends no patient data.</p>
+              <label class="diagnostic-consent">
+                <input id="diagnostic-transmission-confirmation" type="checkbox">
+                <span>I confirm this case contains no identifying information and that I am authorized to transmit it to the configured clinical service for draft review.</span>
+              </label>
+              <button class="button button-outline" id="request-diagnostic-drafts" type="button" disabled>Generate AI draft from this case</button>
+              <p class="field-hint">A real AI draft requires an authenticated, clinically approved AI service on a secured same-origin HTTPS backend. Select consent and request generation to send this case. No API key is stored in this page.</p>
+              <div class="diagnostic-draft-list" id="diagnostic-draft-list" aria-live="polite" hidden></div>
+            </section>
+          </section>
+
+          <section id="diagnostic-documentation-mode" aria-labelledby="documentation-mode-title">
+          <h3 id="documentation-mode-title" class="diagnostic-subheading">Documentation only · clinician-authored</h3>
+          <p class="registry-intro">Record diagnoses and plans selected by the responsible clinician. The app does not generate, verify, or endorse these entries. Independently assess the patient and verify any code or guidance.</p>
+          <div class="diagnosis-list">
+            <fieldset class="diagnosis-entry">
+              <legend>Diagnosis entry 1</legend>
+              <div class="field-grid field-grid-2">
+                <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis1" type="text" maxlength="200" placeholder="Leave blank unless assessed by clinician"></label>
+                <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_1" type="text" maxlength="16" spellcheck="false" placeholder="Clinician-entered; not verified by app"></label>
+                <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus1"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale1" rows="2" maxlength="600" placeholder="Clinician-authored note; no inference is made by this app"></textarea></label>
+              </div>
+            </fieldset>
+            <fieldset class="diagnosis-entry">
+              <legend>Diagnosis entry 2</legend>
+              <div class="field-grid field-grid-2">
+                <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis2" type="text" maxlength="200"></label>
+                <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_2" type="text" maxlength="16" spellcheck="false"></label>
+                <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus2"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale2" rows="2" maxlength="600"></textarea></label>
+              </div>
+            </fieldset>
+            <fieldset class="diagnosis-entry">
+              <legend>Diagnosis entry 3</legend>
+              <div class="field-grid field-grid-2">
+                <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis3" type="text" maxlength="200"></label>
+                <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_3" type="text" maxlength="16" spellcheck="false"></label>
+                <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus3"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale3" rows="2" maxlength="600"></textarea></label>
+              </div>
+            </fieldset>
+            <details class="additional-diagnoses">
+              <summary>Show four additional diagnosis entries (4–7)</summary>
+              <div class="diagnosis-list">
+                <fieldset class="diagnosis-entry">
+                  <legend>Diagnosis entry 4</legend>
+                  <div class="field-grid field-grid-2">
+                    <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis4" type="text" maxlength="200"></label>
+                    <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_4" type="text" maxlength="16" spellcheck="false"></label>
+                    <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus4"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                    <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale4" rows="2" maxlength="600"></textarea></label>
+                  </div>
+                </fieldset>
+                <fieldset class="diagnosis-entry">
+                  <legend>Diagnosis entry 5</legend>
+                  <div class="field-grid field-grid-2">
+                    <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis5" type="text" maxlength="200"></label>
+                    <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_5" type="text" maxlength="16" spellcheck="false"></label>
+                    <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus5"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                    <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale5" rows="2" maxlength="600"></textarea></label>
+                  </div>
+                </fieldset>
+                <fieldset class="diagnosis-entry">
+                  <legend>Diagnosis entry 6</legend>
+                  <div class="field-grid field-grid-2">
+                    <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis6" type="text" maxlength="200"></label>
+                    <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_6" type="text" maxlength="16" spellcheck="false"></label>
+                    <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus6"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                    <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale6" rows="2" maxlength="600"></textarea></label>
+                  </div>
+                </fieldset>
+                <fieldset class="diagnosis-entry">
+                  <legend>Diagnosis entry 7</legend>
+                  <div class="field-grid field-grid-2">
+                    <label class="field"><span>Clinician-entered diagnosis</span><input name="clinicianDiagnosis7" type="text" maxlength="200"></label>
+                    <label class="field"><span>WHO ICD-10 code <small>verify independently</small></span><input name="clinicianIcd10_7" type="text" maxlength="16" spellcheck="false"></label>
+                    <label class="field"><span>Clinician-assigned status</span><select name="clinicianDiagnosisStatus7"><option value="">Not recorded</option><option>Under consideration</option><option>Working diagnosis</option><option>Confirmed by clinician</option><option>Ruled out by clinician</option></select></label>
+                    <label class="field"><span>Clinician's assessment / rationale</span><textarea name="clinicianRationale7" rows="2" maxlength="600"></textarea></label>
+                  </div>
+                </fieldset>
+              </div>
+            </details>
+          </div>
+          <div class="field-grid field-grid-2 clinician-plan">
+            <label class="field field-span-2"><span>Clinician-authored management / follow-up plan</span><textarea name="clinicianManagementPlan" rows="5" maxlength="3000" placeholder="Enter only a plan independently determined by the responsible clinician. The app does not generate or validate management steps."></textarea></label>
+            <label class="field field-span-2"><span>Guideline / source citation, version and review date</span><textarea name="clinicianGuidelineCitation" rows="2" maxlength="1200" placeholder="Clinician-entered source and version; verify it is current and applicable"></textarea></label>
+            <label class="field field-inline-check"><input name="clinicianReviewConfirmed" type="checkbox"><span>Responsible clinician confirms they independently reviewed this documentation</span></label>
+          </div>
+          </section>
+        </section>
+      </form>
+
+      <aside class="right-rail">
+        <section class="card scores-card" aria-labelledby="scores-title">
+          <div class="rail-heading"><div><div class="eyebrow">UNVALIDATED CALCULATIONS</div><h2 id="scores-title">Score calculations</h2></div><span class="live-dot" title="Updates as values change"></span></div>
+          <div class="news-summary" id="news-summary"><div class="news-value" id="news-value">—</div><div><strong>NEWS2</strong><small id="news-level">Enter observations to calculate</small></div></div>
+          <div class="news-scale" id="news-scale" aria-label="NEWS2 score bands"><span></span><span></span><span></span><span></span></div>
+          <p class="score-guidance" id="news-guidance">The score is incomplete until all required observations are entered.</p>
+          <div class="score-list">
+            <div class="score-row"><span>Supplemental O₂</span><strong id="score-o2">+0</strong></div>
+            <div class="score-row"><span>qSOFA</span><strong id="score-qsofa">— <small>insufficient data</small></strong></div>
+            <div class="score-row"><span>SIRS</span><strong id="score-sirs">— <small>insufficient data</small></strong></div>
+            <div class="score-row"><span>GCS</span><strong id="score-gcs">— <small>E/V/M required</small></strong></div>
+            <div class="score-row"><span>CURB-65</span><strong id="score-curb">— <small>insufficient data</small></strong></div>
+            <div class="score-row"><span>Shock Index</span><strong id="score-shock">— <small>HR/SBP required</small></strong></div>
+            <div class="score-row"><span>MAP</span><strong id="score-map">— <small>SBP/DBP required</small></strong></div>
+          </div>
+          <div class="missing-note" id="missing-note">NEWS2 missing: respiratory rate, SpO₂, systolic BP, heart rate, temperature, consciousness</div>
+          <p class="score-footnote"><strong>Not validated for clinical use.</strong> These calculations are not diagnoses, triage guidance, or standalone disposition decisions. Pediatric mode suppresses NEWS2, qSOFA, SIRS, and CURB-65; obstetric mode does not adjust scores for pregnancy. Independently verify all inputs and outputs.</p>
+        </section>
+
+        <section class="card report-card" id="report-section">
+          <div class="rail-heading"><div><div class="eyebrow">CLINICAL WORKSHEET</div><h2>Patient case report</h2></div></div>
+          <p class="report-description" id="report-description">Enter clinician documentation or prepare the worksheet to enable downloads.</p>
+          <div class="download-row">
+            <button class="button button-outline button-small" id="download-pdf" type="button"><span>↓</span> PDF / Print</button>
+            <button class="button button-outline button-small" id="download-word" type="button"><span>↓</span> Word</button>
+          </div>
+          <p class="report-caveat">Reports contain clinician-entered information and unvalidated calculations only. The synthetic demo is not included; no diagnosis or treatment recommendation is generated for the patient.</p>
+        </section>
+
+        <section class="card audit-card">
+          <div class="rail-heading"><div><div class="eyebrow">SESSION ACTIVITY</div><h2>Audit log <span class="audit-count" id="audit-count">0</span></h2></div>
+            <div class="export-menu"><button class="icon-button" id="export-menu-button" type="button" aria-label="Export audit log" aria-expanded="false">↧</button><div class="export-options" id="export-options" hidden><button type="button" data-export="json">Export JSON</button><button type="button" data-export="csv">Export CSV</button></div></div>
+          </div>
+          <div class="audit-list" id="audit-list"><div class="empty-state">Your session activity will appear here.</div></div>
+          <div class="audit-footer">
+            <span>In-memory only · latest 30 shown</span>
+            <div class="audit-actions"><button type="button" id="audit-order" aria-label="Sort audit events newest first">Newest first</button><button type="button" id="replay-audit">Replay timeline</button></div>
+          </div>
+        </section>
+
+        <section class="card registry-card">
+          <div class="rail-heading"><div><div class="eyebrow">COVERAGE &amp; STATUS</div><h2>Registry coverage</h2></div></div>
+          <p class="registry-summary" id="registry-summary"></p>
+          <div class="registry-mini-list" id="active-modules-list"></div>
+          <a class="registry-link" href="guidelines.html">Open module, score &amp; guideline registry →</a>
+        </section>
+
+        <section class="card safety-card">
+          <div class="safety-card-title"><span class="shield-icon" aria-hidden="true">✓</span><h2>Safety architecture</h2></div>
+          <ul>
+            <li><span>✓</span> No patient-specific AI engine is connected</li>
+            <li><span>✓</span> Demo uses a fixed synthetic example only</li>
+            <li><span>✓</span> Clinician confirmation is explicit</li>
+            <li><span>✓</span> Red flags remain clinician-reviewed</li>
+            <li><span>✓</span> No patient-specific diagnosis or treatment generated</li>
+            <li><span>✓</span> No authentication or server-side audit</li>
+            <li><span>✓</span> Audit trail is in-memory only</li>
+          </ul>
+          <a href="guidelines.html">Review clinical score sources <span aria-hidden="true">→</span></a>
+        </section>
+      </aside>
+    </div>
+    <footer class="page-footer">
+      <span>CLARITY CDSS <span class="footer-divider">·</span> CLINICAL DOCUMENTATION WORKSPACE</span>
+      <span>Not a diagnostic system · Unvalidated calculations · Do not use for patient care</span>
+    </footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f8">
+  <meta name="description" content="External guideline references and the validation status of the Clarity clinical documentation workspace.">
+  <title>Guideline sources — Clarity CDSS</title>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="clinical-registry.js" defer></script>
+  <script src="registry-page.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Back to Clarity CDSS">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 5v22M5 16h22M8.2 8.2l15.6 15.6m0-15.6L8.2 23.8"/></svg></span>
+      <span class="brand-copy"><strong>clarity</strong><small>CLINICAL DOCUMENTATION</small></span>
+    </a>
+    <div class="topbar-right">
+      <a class="guidelines-link" href="index.html">← Back to workspace</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span><span class="theme-toggle-label">Dark mode</span>
+      </button>
+    </div>
+  </header>
+  <main class="page-shell guidelines-page">
+    <section class="guidelines-hero">
+      <div class="eyebrow"><span class="eyebrow-dot"></span> REFERENCE LIBRARY</div>
+      <h1>Guideline sources</h1>
+      <p class="guidelines-intro">External links to professional and guideline-publisher references for clinician review. The workspace does not fetch, interpret, or use these links to generate diagnoses or recommendations for a case.</p>
+    </section>
+    <p class="guideline-disclaimer"><strong>Not for clinical use.</strong> This workspace has no validated diagnostic engine. Its score calculations have not been independently validated and must not guide patient care. Guideline recommendations change, vary by jurisdiction, and depend on the patient context; external links are references only and are not applied to individual cases.</p>
+    <section class="card guideline-group registry-page-section">
+      <h2>Blueprint registries · coverage and status</h2>
+      <p class="registry-intro">Each specialty module lists an external professional or guideline reference. Open the source and verify the current version, jurisdiction, scope, and patient-specific applicability yourself. These links are reference-only: they do not power diagnosis generation. Specialty modules are documentation scaffolds; this registry provides no diagnostic algorithms, evidence retrieval, or recommendations. Any draft review controls in the workspace are transient and are not persisted.</p>
+      <label class="field registry-search"><span>Search modules, scores, symptoms, or findings</span><input id="registry-search" type="search" maxlength="100" placeholder="e.g. obstetrics, MAP, fever"></label>
+      <div class="registry-page-count" id="registry-page-count" role="status"></div>
+      <h3 class="registry-subheading">Specialty modules</h3>
+      <div class="registry-page-grid" id="registry-modules"></div>
+      <h3 class="registry-subheading">Deterministic score registry</h3>
+      <div class="registry-page-grid" id="registry-scores"></div>
+      <h3 class="registry-subheading">Structured symptom / finding taxonomy</h3>
+      <div class="registry-page-grid" id="registry-taxonomy"></div>
+    </section>
+    <section class="card guideline-group"><h2>Tier 1 · Global health guidance</h2><div class="guideline-links">
+      <a class="guideline-item" href="https://www.who.int/publications/who-guidelines" target="_blank" rel="noopener noreferrer"><strong>WHO Guidelines</strong><span>Approved WHO recommendations across clinical and public-health topics.</span></a>
+      <a class="guideline-item" href="https://www.who.int/about/who-we-are/regional-offices" target="_blank" rel="noopener noreferrer"><strong>WHO Regional Offices</strong><span>Regional adaptations and guidance from WHO offices.</span></a>
+      <a class="guideline-item" href="https://www.who.int/publications/i/item/9789240062382" target="_blank" rel="noopener noreferrer"><strong>WHO AWaRe antibiotic book</strong><span>Antibiotic stewardship reference; no drug choices are generated here.</span></a>
+      <a class="guideline-item" href="https://www.who.int/publications/i/item/basic-emergency-care-approach-to-the-acutely-ill-and-injured" target="_blank" rel="noopener noreferrer"><strong>WHO Basic Emergency Care</strong><span>Approach to acutely ill and injured patients.</span></a>
+    </div></section>
+    <section class="card guideline-group"><h2>East Africa &amp; Tanzania · agency portals only</h2><p class="registry-intro">These portals are offered as a regional starting point only. No country-specific guideline text, local adaptation, availability, or current recommendation has been curated or verified here.</p><div class="guideline-links">
+      <a class="guideline-item" href="https://www.moh.go.tz/" target="_blank" rel="noopener noreferrer"><strong>Tanzania Ministry of Health</strong><span>Official ministry portal; no national clinical recommendations are embedded or verified here.</span></a>
+      <a class="guideline-item" href="https://www.health.go.ug/" target="_blank" rel="noopener noreferrer"><strong>Uganda Ministry of Health</strong><span>Official ministry portal; no national clinical recommendations are embedded or verified here.</span></a>
+      <a class="guideline-item" href="https://www.health.go.ke/" target="_blank" rel="noopener noreferrer"><strong>Kenya Ministry of Health</strong><span>Official ministry portal; no national clinical recommendations are embedded or verified here.</span></a>
+      <a class="guideline-item" href="https://www.afro.who.int/" target="_blank" rel="noopener noreferrer"><strong>WHO Regional Office for Africa</strong><span>Regional agency portal; specific guideline status and applicability must be checked by the clinician.</span></a>
+    </div></section>
+    <section class="card guideline-group"><h2>Tier 2 · Regional and national agencies</h2><div class="guideline-links">
+      <a class="guideline-item" href="https://www.cdc.gov/" target="_blank" rel="noopener noreferrer"><strong>CDC</strong><span>United States public health and clinical resources.</span></a>
+      <a class="guideline-item" href="https://www.ecdc.europa.eu/en" target="_blank" rel="noopener noreferrer"><strong>ECDC</strong><span>European disease prevention and control resources.</span></a>
+      <a class="guideline-item" href="https://www.fda.gov/drugs/drug-safety-and-availability" target="_blank" rel="noopener noreferrer"><strong>FDA Drug Safety</strong><span>US safety communications and regulatory information.</span></a>
+      <a class="guideline-item" href="https://www.ema.europa.eu/en" target="_blank" rel="noopener noreferrer"><strong>EMA</strong><span>European medicines information and safety referrals.</span></a>
+      <a class="guideline-item" href="https://www.uspreventiveservicestaskforce.org/" target="_blank" rel="noopener noreferrer"><strong>USPSTF</strong><span>Evidence-graded preventive service recommendations.</span></a>
+    </div></section>
+    <section class="card guideline-group"><h2>Tier 3 · Evidence producers and specialty bodies</h2><div class="guideline-links">
+      <a class="guideline-item" href="https://www.nice.org.uk/guidance" target="_blank" rel="noopener noreferrer"><strong>NICE</strong><span>UK evidence-based guidelines and technology appraisals.</span></a>
+      <a class="guideline-item" href="https://www.sign.ac.uk/" target="_blank" rel="noopener noreferrer"><strong>SIGN</strong><span>Scottish Intercollegiate Guidelines Network.</span></a>
+      <a class="guideline-item" href="https://www.cochranelibrary.com/" target="_blank" rel="noopener noreferrer"><strong>Cochrane Library</strong><span>Systematic reviews of healthcare interventions.</span></a>
+      <a class="guideline-item" href="https://www.escardio.org/Guidelines" target="_blank" rel="noopener noreferrer"><strong>European Society of Cardiology</strong><span>Cardiovascular clinical practice guidelines.</span></a>
+    </div></section>
+    <section class="card guideline-group"><h2>Clinical scores · External references</h2><div class="guideline-links">
+      <a class="guideline-item" href="https://www.rcp.ac.uk/improving-care/resources/national-early-warning-score-news-2/" target="_blank" rel="noopener noreferrer"><strong>NEWS2 · Royal College of Physicians</strong><span>National Early Warning Score 2 reference and resources.</span></a>
+      <a class="guideline-item" href="https://www.sccm.org/survivingsepsiscampaign" target="_blank" rel="noopener noreferrer"><strong>qSOFA · Surviving Sepsis Campaign</strong><span>Sepsis screening context and current campaign guidance.</span></a>
+      <a class="guideline-item" href="https://www.ncbi.nlm.nih.gov/books/NBK551585/" target="_blank" rel="noopener noreferrer"><strong>CURB-65 · NCBI Bookshelf</strong><span>Clinical overview of community-acquired pneumonia severity tools.</span></a>
+      <a class="guideline-item" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6466438/" target="_blank" rel="noopener noreferrer"><strong>Shock Index · Evidence review</strong><span>Review of shock index variants in acute care.</span></a>
+      <a class="guideline-item" href="https://www.glasgowcomascale.org/" target="_blank" rel="noopener noreferrer"><strong>Glasgow Coma Scale</strong><span>Official GCS assessment information.</span></a>
+    </div></section>
+    <footer class="page-footer"><span>CLARITY CDSS <span class="footer-divider">·</span> CLINICAL DOCUMENTATION WORKSPACE</span><span>Sources checked by the clinician at point of use</span></footer>
+  </main>
+</body>
+</html>
